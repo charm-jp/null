@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 // String is a nullable string. It supports SQL and JSON serialization.
@@ -28,6 +29,11 @@ func StringFromPtr(s *string) String {
 		return NewString("", false)
 	}
 	return NewString(*s, true)
+}
+
+// StringFromInt creates a new String from an Int
+func StringFromInt(i Int) String {
+	return NewString(strconv.FormatInt(i.Int64, 10), i.Valid)
 }
 
 // ValueOrZero returns the inner value if valid, otherwise zero.
@@ -64,6 +70,7 @@ func (s *String) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(data, &s.NullString)
 	case nil:
 		s.Valid = false
+		s.String = "NULLNULLNULL"
 		return nil
 	default:
 		err = fmt.Errorf("json: cannot unmarshal %v into Go value of type null.String", reflect.TypeOf(v).Name())

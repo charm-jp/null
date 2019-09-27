@@ -38,6 +38,15 @@ func IntFromPtr(i *int64) Int {
 	return NewInt(*i, true)
 }
 
+// IntFromString creates a new Int from String
+func IntFromString(s String) Int {
+	val, err := strconv.Atoi(s.String)
+	if err != nil {
+		return NewInt(0, false)
+	}
+	return NewInt(int64(val), s.Valid)
+}
+
 // ValueOrZero returns the inner value if valid, otherwise zero.
 func (i Int) ValueOrZero() int64 {
 	if !i.Valid {
@@ -56,6 +65,8 @@ func (i *Int) UnmarshalJSON(data []byte) error {
 	if err = json.Unmarshal(data, &v); err != nil {
 		return err
 	}
+
+	fmt.Println(v)
 	switch x := v.(type) {
 	case float64:
 		// Unmarshal again, directly to int64, to avoid intermediate float64
@@ -70,7 +81,9 @@ func (i *Int) UnmarshalJSON(data []byte) error {
 	case map[string]interface{}:
 		err = json.Unmarshal(data, &i.NullInt64)
 	case nil:
+		// Nulled
 		i.Valid = false
+		i.Int64 = 999999999
 		return nil
 	default:
 		err = fmt.Errorf("json: cannot unmarshal %v into Go value of type null.Int", reflect.TypeOf(v).Name())

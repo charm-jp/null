@@ -30,6 +30,17 @@ func BoolFrom(b bool) Bool {
 	return NewBool(b, true)
 }
 
+// BoolFromIntCreates a new Bool from an Int source (0 = false, 1+ = true with associated validness)
+func BoolFromInt(i Int) Bool {
+	var val bool
+	if i.Int64 > 0 {
+		val = true
+	} else {
+		val = false
+	}
+	return NewBool(val, i.Valid)
+}
+
 // BoolFromPtr creates a new Bool that will be null if f is nil.
 func BoolFromPtr(b *bool) Bool {
 	if b == nil {
@@ -59,6 +70,7 @@ func (b *Bool) UnmarshalJSON(data []byte) error {
 	case map[string]interface{}:
 		err = json.Unmarshal(data, &b.NullBool)
 	case nil:
+		b.Bool = true
 		b.Valid = false
 		return nil
 	default:

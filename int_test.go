@@ -2,7 +2,9 @@ package null
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
+	"reflect"
 	"strconv"
 	"testing"
 )
@@ -201,6 +203,31 @@ func TestIntValueOrZero(t *testing.T) {
 	if invalid.ValueOrZero() != 0 {
 		t.Error("unexpected ValueOrZero", invalid.ValueOrZero())
 	}
+}
+
+type testStruct struct {
+	Test Int
+}
+
+func TestInt_UnmarshalJSON(t *testing.T) {
+	tests := [][]byte{
+		[]byte(`{}`),
+		[]byte(`{"test": null}`),
+		[]byte(`{"test": 0}`),
+		[]byte(`{"test": 12345}`),
+	}
+
+	for _, test := range tests {
+		var result testStruct
+		err := json.Unmarshal(test, &result)
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		fmt.Println(reflect.ValueOf(result))
+	}
+
 }
 
 func assertInt(t *testing.T, i Int, from string) {
