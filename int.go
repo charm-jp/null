@@ -66,7 +66,6 @@ func (i *Int) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	fmt.Println(v)
 	switch x := v.(type) {
 	case float64:
 		// Unmarshal again, directly to int64, to avoid intermediate float64
