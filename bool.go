@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	grpc_shared_go "gitlab.dev.charm.internal/grpc/grpc-shared-go"
 	"reflect"
 )
 
@@ -52,6 +53,24 @@ func BoolFromPtr(b *bool) Bool {
 // ValueOrZero returns the inner value if valid, otherwise false.
 func (b Bool) ValueOrZero() bool {
 	return b.Valid && b.Bool
+}
+
+func BoolFromPB(s *grpc_shared_go.NullBool) Bool {
+	switch s.Kind {
+	case &grpc_shared_go.NullBool_Data{}:
+
+	}
+	return Bool{}
+}
+
+func (s Bool) ToPB() *grpc_shared_go.NullBool {
+	if s.Valid {
+		return &grpc_shared_go.NullBool{
+			Kind: &grpc_shared_go.NullBool_Data{Data: s.Bool},
+		}
+	}
+
+	return &grpc_shared_go.NullBool{Kind: &grpc_shared_go.NullBool_Null{}}
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

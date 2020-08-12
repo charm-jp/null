@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"gitlab.dev.charm.internal/grpc/grpc-shared-go"
 	"reflect"
 	"strconv"
 )
@@ -52,6 +53,24 @@ func NewString(s string, valid bool) String {
 			Valid:  valid,
 		},
 	}
+}
+
+func StringFromPB(s *grpc_shared_go.NullString) String {
+	switch s.Kind {
+	case &grpc_shared_go.NullString_Data{}:
+
+	}
+	return String{}
+}
+
+func (s String) ToPB() *grpc_shared_go.NullString {
+	if s.Valid {
+		return &grpc_shared_go.NullString{
+			Kind: &grpc_shared_go.NullString_Data{Data: s.String},
+		}
+	}
+
+	return &grpc_shared_go.NullString{Kind: &grpc_shared_go.NullString_Null{}}
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
