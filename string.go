@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"gitlab.dev.charm.internal/grpc/grpc-shared-go"
+	"github.com/charm-jp/grpc-shared-go"
 	"reflect"
 	"strconv"
 )

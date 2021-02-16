@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	grpc_shared_go "gitlab.dev.charm.internal/grpc/grpc-shared-go"
+	grpc_shared_go "github.com/charm-jp/grpc-shared-go"
 	"reflect"
 )
 
