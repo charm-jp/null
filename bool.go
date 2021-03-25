@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	grpc_shared_go "github.com/charm-jp/grpc-shared-go"
+	structpb "github.com/golang/protobuf/ptypes/struct"
 	"reflect"
 )
 
@@ -56,10 +57,20 @@ func (b Bool) ValueOrZero() bool {
 }
 
 func BoolFromPB(s *grpc_shared_go.NullBool) Bool {
-	switch s.Kind {
-	case &grpc_shared_go.NullBool_Data{}:
-
+	if s != nil {
+		switch s.Kind {
+		case &grpc_shared_go.NullBool_Data{}:
+			return BoolFrom(s.GetData())
+		case &grpc_shared_go.NullBool_Null{}:
+			return Bool{
+				NullBool: sql.NullBool{
+					Bool:  true,
+					Valid: false,
+				},
+			}
+		}
 	}
+
 	return Bool{}
 }
 
@@ -68,9 +79,13 @@ func (s Bool) ToPB() *grpc_shared_go.NullBool {
 		return &grpc_shared_go.NullBool{
 			Kind: &grpc_shared_go.NullBool_Data{Data: s.Bool},
 		}
+	} else if s.Bool == true {
+		return &grpc_shared_go.NullBool{
+			Kind: &grpc_shared_go.NullBool_Null{Null: structpb.NullValue_NULL_VALUE},
+		}
 	}
 
-	return &grpc_shared_go.NullBool{Kind: &grpc_shared_go.NullBool_Null{}}
+	return nil
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	grpc_shared_go "github.com/charm-jp/grpc-shared-go"
+	structpb "github.com/golang/protobuf/ptypes/struct"
 	"reflect"
 	"strconv"
 )
@@ -57,10 +58,20 @@ func (i Int) ValueOrZero() int64 {
 }
 
 func IntFromPB(s *grpc_shared_go.NullInt64) Int {
-	switch s.Kind {
-	case &grpc_shared_go.NullInt64_Data{}:
-
+	if s != nil {
+		switch s.Kind {
+		case &grpc_shared_go.NullInt64_Data{}:
+			return IntFrom(s.GetData())
+		case &grpc_shared_go.NullInt64_Null{}:
+			return Int{
+				NullInt64: sql.NullInt64{
+					Int64: 999999999,
+					Valid: false,
+				},
+			}
+		}
 	}
+
 	return Int{}
 }
 
@@ -69,9 +80,13 @@ func (i Int) ToPB() *grpc_shared_go.NullInt64 {
 		return &grpc_shared_go.NullInt64{
 			Kind: &grpc_shared_go.NullInt64_Data{Data: i.Int64},
 		}
+	} else if i.Int64 == 999999999 {
+		return &grpc_shared_go.NullInt64{
+			Kind: &grpc_shared_go.NullInt64_Null{Null: structpb.NullValue_NULL_VALUE},
+		}
 	}
 
-	return &grpc_shared_go.NullInt64{Kind: &grpc_shared_go.NullInt64_Null{}}
+	return nil
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
