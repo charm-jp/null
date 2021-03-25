@@ -59,10 +59,10 @@ func (i Int) ValueOrZero() int64 {
 
 func IntFromPB(s *grpc_shared_go.NullInt64) Int {
 	if s != nil {
-		switch s.Kind {
-		case &grpc_shared_go.NullInt64_Data{}:
-			return IntFrom(s.GetData())
-		case &grpc_shared_go.NullInt64_Null{}:
+		switch x := s.Kind.(type) {
+		case *grpc_shared_go.NullInt64_Data:
+			return IntFrom(x.Data)
+		case *grpc_shared_go.NullInt64_Null:
 			return Int{
 				NullInt64: sql.NullInt64{
 					Int64: 999999999,

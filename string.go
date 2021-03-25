@@ -58,10 +58,10 @@ func NewString(s string, valid bool) String {
 
 func StringFromPB(s *grpc_shared_go.NullString) String {
 	if s != nil {
-		switch s.Kind {
-		case &grpc_shared_go.NullString_Data{}:
-			return StringFrom(s.GetData())
-		case &grpc_shared_go.NullString_Null{}:
+		switch x := s.Kind.(type) {
+		case *grpc_shared_go.NullString_Data:
+			return StringFrom(x.Data)
+		case *grpc_shared_go.NullString_Null:
 			return String{
 				NullString: sql.NullString{
 					String: "NULLNULLNULL",

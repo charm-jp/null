@@ -58,10 +58,10 @@ func (b Bool) ValueOrZero() bool {
 
 func BoolFromPB(s *grpc_shared_go.NullBool) Bool {
 	if s != nil {
-		switch s.Kind {
-		case &grpc_shared_go.NullBool_Data{}:
-			return BoolFrom(s.GetData())
-		case &grpc_shared_go.NullBool_Null{}:
+		switch x := s.Kind.(type) {
+		case *grpc_shared_go.NullBool_Data:
+			return BoolFrom(x.Data)
+		case *grpc_shared_go.NullBool_Null:
 			return Bool{
 				NullBool: sql.NullBool{
 					Bool:  true,
