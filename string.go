@@ -92,6 +92,19 @@ func StringFromPBUUID(s *grpc_shared_go.UUID) String {
 	return String{}
 }
 
+func StringFromEmptyIsNull(s string) String {
+	if s != "" {
+		return StringFrom(s)
+	}
+
+	return String{
+		NullString: sql.NullString{
+			String: "NULLNULLNULL",
+			Valid:  false,
+		},
+	}
+}
+
 func (s String) ToPB() *grpc_shared_go.NullString {
 	if s.Valid {
 		return &grpc_shared_go.NullString{
