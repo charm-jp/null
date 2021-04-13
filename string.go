@@ -74,6 +74,24 @@ func StringFromPB(s *grpc_shared_go.NullString) String {
 	return String{}
 }
 
+func StringFromPBUUID(s *grpc_shared_go.UUID) String {
+	if s != nil {
+		switch x := s.Kind.(type) {
+		case *grpc_shared_go.UUID_Uuid:
+			return StringFrom(x.Uuid)
+		case *grpc_shared_go.UUID_Null:
+			return String{
+				NullString: sql.NullString{
+					String: "NULLNULLNULL",
+					Valid:  false,
+				},
+			}
+		}
+	}
+
+	return String{}
+}
+
 func (s String) ToPB() *grpc_shared_go.NullString {
 	if s.Valid {
 		return &grpc_shared_go.NullString{
